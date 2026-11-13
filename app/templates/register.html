@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Registration - LPU Event Scheduler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;650;700;750;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;650;700;750;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=5.0" />
+  <style>
+    .register-page-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      position: relative;
+      background: radial-gradient(circle at 80% 20%, rgba(245, 130, 32, 0.12) 0%, transparent 50%),
+                  radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+                  var(--bg-main, #0b1329);
+      overflow: hidden;
+    }
+
+    .register-container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card-bg, rgba(17, 24, 39, 0.88));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 20px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      position: relative;
+      z-index: 2;
+      animation: fadeInCard 0.4s ease-out;
+    }
+
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .register-header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .register-logo {
+      height: 55px;
+      width: auto;
+      margin-bottom: 0.75rem;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+    }
+
+    .register-app-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #f58220;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+
+    .register-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-main, #ffffff);
+      margin-bottom: 0.25rem;
+    }
+
+    .register-subheading {
+      font-size: 0.85rem;
+      color: var(--text-muted, #94a3b8);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 520px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main, #e2e8f0);
+      margin-bottom: 0.35rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      background: var(--input-bg, rgba(255, 255, 255, 0.05));
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+      border-radius: 10px;
+      color: var(--text-main, #ffffff);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .form-select {
+      cursor: pointer;
+    }
+
+    .form-select option {
+      background: #111827;
+      color: #ffffff;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: #f58220;
+      box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.2);
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 0.75rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted, #94a3b8);
+      cursor: pointer;
+      padding: 0.25rem;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .password-toggle-btn:hover {
+      color: #f58220;
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(135deg, #f58220 0%, #e06d10 100%);
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(245, 130, 32, 0.35);
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-register:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(245, 130, 32, 0.5);
+    }
+
+    .btn-register:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .alert-box {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      text-align: left;
+    }
+
+    .alert-box.hidden { display: none; }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #86efac;
+    }
+
+    .role-banner {
+      background: rgba(245, 130, 32, 0.08);
+      border: 1px dashed rgba(245, 130, 32, 0.35);
+      border-radius: 10px;
+      padding: 0.65rem 0.85rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: #fed7aa;
+    }
+
+    .role-badge {
+      background: #f58220;
+      color: #ffffff;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .rules-checklist {
+      margin-top: 0.4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    .rule-item.valid {
+      color: #86efac;
+    }
+
+    .signin-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted, #94a3b8);
+    }
+
+    .signin-link {
+      color: #f58220;
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 0.25rem;
+    }
+
+    .signin-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="register-page-wrap">
+    <div class="register-container">
+      <div class="register-header">
+        <img src="/static/logo.png" alt="Lovely Professional University Crest" class="register-logo" />
+        <p class="register-app-title">University Event Scheduling Matrix</p>
+        <h1 class="register-heading">Student Registration</h1>
+        <p class="register-subheading">Create your institutional student portal account</p>
+      </div>
+
+      <!-- Institutional Role Policy Notice -->
+      <div class="role-banner">
+        <span>🎓</span>
+        <div>
+          Registered accounts receive the <span class="role-badge">Student</span> role with institutional read-only access.
+        </div>
+      </div>
+
+      <!-- Feedback Alert Box -->
+      <div id="alertBox" class="alert-box hidden" role="alert">
+        <span id="alertIcon">⚠️</span>
+        <span id="alertMessage"></span>
+      </div>
+
+      <!-- Registration Form -->
+      <form id="registerForm" novalidate>
+        <div class="form-group">
+          <label for="fullName" class="form-label">Full Name *</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="fullName"
+              name="full_name"
+              class="form-input"
+              required
+              placeholder="e.g. Jane Doe"
+              autocomplete="name"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address *</label>
+          <div class="input-wrapper">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              required
+              placeholder="e.g. yourname@gmail.com"
+              autocomplete="email"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="studentId" class="form-label">Student ID (Optional)</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="studentId"
+                name="student_id"
+                class="form-input"
+                placeholder="e.g. 12204567"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="departmentSelect" class="form-label">Department *</label>
+            <div class="input-wrapper">
+              <select id="departmentSelect" name="department_id" class="form-select">
+                <option value="">General / University-Wide</option>
+                <option value="1">Computer Science & Engineering</option>
+                <option value="2">Electronics & Electrical Engineering</option>
+                <option value="3">Mittal School of Business</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password *</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input"
+              required
+              placeholder="••••••••••••"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              id="togglePassword"
+              class="password-toggle-btn"
+              title="Show / Hide Password"
+            >
+              👁️
+            </button>
+          </div>
+          <div class="rules-checklist">
+            <span id="ruleLength" class="rule-item">✗ 8+ characters</span>
+            <span id="ruleUpper" class="rule-item">✗ Uppercase (A-Z)</span>
+            <span id="ruleLower" class="rule-item">✗ Lowercase (a-z)</span>
+            <span id="ruleDigit" class="rule-item">✗ Number (0-9)</span>
+            <span id="ruleSpecial" class="rule-item" style="grid-column: span 2;">✗ Special character (!@#$%...)</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">Confirm Password *</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirm_password"
+              class="form-input"
+              required
+              placeholder="••••••••••••"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              id="toggleConfirmPassword"
+              class="password-toggle-btn"
+              title="Show / Hide Password"
+            >
+              👁️
+            </button>
+          </div>
+          <span id="matchFeedback" style="font-size: 0.75rem; margin-top: 0.25rem; display: block;"></span>
+        </div>
+
+        <button type="submit" id="registerBtn" class="btn-register">
+          <span id="btnText">Create Student Account</span>
+        </button>
+      </form>
+
+      <div class="signin-footer">
+        Already have an institutional account?
+        <a href="/login" class="signin-link">Sign In</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    // Toggle Password Visibility
+    const setupToggle = (btnId, inputId) => {
+      const btn = $(btnId);
+      const input = $(inputId);
+      if (!btn || !input) return;
+      btn.addEventListener('click', () => {
+        const isPass = input.getAttribute('type') === 'password';
+        input.setAttribute('type', isPass ? 'text' : 'password');
+        btn.textContent = isPass ? '🙈' : '👁️';
+      });
+    };
+    setupToggle('togglePassword', 'password');
+    setupToggle('toggleConfirmPassword', 'confirmPassword');
+
+    // Alert helper
+    function showAlert(msg, isError = true) {
+      const box = $('alertBox');
+      const icon = $('alertIcon');
+      const text = $('alertMessage');
+      box.className = `alert-box ${isError ? 'alert-error' : 'alert-success'}`;
+      icon.textContent = isError ? '⚠️' : '✅';
+      text.textContent = msg;
+      box.classList.remove('hidden');
+    }
+
+    function hideAlert() {
+      $('alertBox').classList.add('hidden');
+    }
+
+    // Password criteria live check
+    const pwdInput = $('password');
+    const confirmInput = $('confirmPassword');
+    const matchFeedback = $('matchFeedback');
+
+    function checkPasswordCriteria(val) {
+      const hasLength = val.length >= 8;
+      const hasUpper = /[A-Z]/.test(val);
+      const hasLower = /[a-z]/.test(val);
+      const hasDigit = /[0-9]/.test(val);
+      const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"|,.<>/?`~]/.test(val);
+
+      const updateRule = (id, valid, text) => {
+        const el = $(id);
+        if (!el) return;
+        el.className = `rule-item ${valid ? 'valid' : ''}`;
+        el.textContent = `${valid ? '✓' : '✗'} ${text}`;
+      };
+
+      updateRule('ruleLength', hasLength, '8+ characters');
+      updateRule('ruleUpper', hasUpper, 'Uppercase (A-Z)');
+      updateRule('ruleLower', hasLower, 'Lowercase (a-z)');
+      updateRule('ruleDigit', hasDigit, 'Number (0-9)');
+      updateRule('ruleSpecial', hasSpecial, 'Special character (!@#$%...)');
+
+      return hasLength && hasUpper && hasLower && hasDigit && hasSpecial;
+    }
+
+    pwdInput.addEventListener('input', () => {
+      checkPasswordCriteria(pwdInput.value);
+      checkMatch();
+    });
+
+    confirmInput.addEventListener('input', checkMatch);
+
+    function checkMatch() {
+      if (!confirmInput.value) {
+        matchFeedback.textContent = '';
+        return;
+      }
+      if (pwdInput.value === confirmInput.value) {
+        matchFeedback.style.color = '#86efac';
+        matchFeedback.textContent = '✓ Passwords match';
+      } else {
+        matchFeedback.style.color = '#fca5a5';
+        matchFeedback.textContent = '✗ Passwords do not match';
+      }
+    }
+
+    // Load available departments dynamically if possible
+    async function loadDepartments() {
+      try {
+        const res = await fetch('/api/departments');
+        if (res.ok) {
+          const depts = await res.json();
+          if (Array.isArray(depts) && depts.length > 0) {
+            const sel = $('departmentSelect');
+            sel.innerHTML = '<option value="">General / University-Wide</option>' +
+              depts.map(d => `<option value="${d.id}">${d.name} (${d.code || 'Dept'})</option>`).join('');
+          }
+        }
+      } catch (e) {
+        // Fallback options already present
+      }
+    }
+    loadDepartments();
+
+    // Form submission
+    $('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const fullName = $('fullName').value.trim();
+      const email = $('email').value.trim();
+      const studentId = $('studentId').value.trim();
+      const deptVal = $('departmentSelect').value;
+      const deptId = deptVal ? parseInt(deptVal, 10) : null;
+      const password = pwdInput.value;
+      const confirmPassword = confirmInput.value;
+
+      // Validation
+      if (!fullName) {
+        showAlert('Please enter your full name.');
+        $('fullName').focus();
+        return;
+      }
+      if (!email || !email.includes('@') || !email.includes('.')) {
+        showAlert('Please enter a valid email address.');
+        $('email').focus();
+        return;
+      }
+      if (!checkPasswordCriteria(password)) {
+        showAlert('Password must be at least 8 characters long and contain uppercase, lowercase, numbers, and special characters.');
+        pwdInput.focus();
+        return;
+      }
+      if (password !== confirmPassword) {
+        showAlert('Passwords do not match. Please re-enter your confirmation password.');
+        confirmInput.focus();
+        return;
+      }
+
+      const registerBtn = $('registerBtn');
+      const btnText = $('btnText');
+      registerBtn.disabled = true;
+      btnText.textContent = 'Creating Account...';
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            password,
+            confirm_password: confirmPassword,
+            full_name: fullName,
+            department_id: deptId,
+            student_id: studentId || null,
+            role: 'Student', // Always requests Student role
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.detail || 'Registration failed. Please check your information.');
+        }
+
+        showAlert('Student account registered successfully! Redirecting to login...', false);
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1500);
+
+      } catch (err) {
+        clearTimeout(timeoutId);
+        const errorMsg = err.name === 'AbortError'
+          ? 'Network request timed out. Please try again.'
+          : err.message;
+        showAlert(errorMsg, true);
+        registerBtn.disabled = false;
+        btnText.textContent = 'Create Student Account';
+      }
+    });
+  </script>
+</body>
+</html>

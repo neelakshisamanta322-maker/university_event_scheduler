@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - University Event Scheduling & Resource Optimization Matrix | LPU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;650;700;750;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;650;700;750;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=5.0" />
+  <style>
+    .login-page-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      background: radial-gradient(circle at 80% 20%, rgba(245, 130, 32, 0.12) 0%, transparent 50%),
+                  radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+                  var(--bg-main, #0b1329);
+      overflow: hidden;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 460px;
+      background: var(--card-bg, rgba(17, 24, 39, 0.85));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      position: relative;
+      z-index: 2;
+      animation: fadeInCard 0.4s ease-out;
+    }
+
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo {
+      height: 60px;
+      width: auto;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+    }
+
+    .login-app-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f58220;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-main, #ffffff);
+      margin-bottom: 0.35rem;
+    }
+
+    .login-subheading {
+      font-size: 0.9rem;
+      color: var(--text-muted, #94a3b8);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main, #e2e8f0);
+      margin-bottom: 0.4rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--input-bg, rgba(255, 255, 255, 0.05));
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+      border-radius: 10px;
+      color: var(--text-main, #ffffff);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #f58220;
+      box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.2);
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 0.75rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted, #94a3b8);
+      cursor: pointer;
+      padding: 0.25rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .password-toggle-btn:hover {
+      color: #f58220;
+    }
+
+    .form-row-remember {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text-muted, #cbd5e1);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .remember-checkbox {
+      accent-color: #f58220;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      color: #f58220;
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+      opacity: 0.85;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(135deg, #f58220 0%, #e06d10 100%);
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(245, 130, 32, 0.35);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(245, 130, 32, 0.5);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .alert-box {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      text-align: left;
+    }
+
+    .alert-box.hidden { display: none; }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #86efac;
+    }
+
+    /* Demo Accounts Helper Bar */
+    .demo-accounts-section {
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      text-align: center;
+    }
+
+    .demo-accounts-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted, #94a3b8);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .demo-badges-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .demo-pill-btn {
+      padding: 0.35rem 0.65rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main, #ffffff);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .demo-pill-btn:hover {
+      background: rgba(245, 130, 32, 0.2);
+      border-color: #f58220;
+      color: #f58220;
+    }
+
+    /* Modal for Forgot Password */
+    .custom-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .custom-modal.hidden { display: none; }
+    .modal-content {
+      background: var(--card-bg, #111827);
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+      border-radius: 16px;
+      padding: 1.75rem;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #ffffff;
+    }
+    .modal-body {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    .modal-close-btn {
+      padding: 0.6rem 1.5rem;
+      background: #f58220;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-page-wrap">
+    <div class="login-container">
+      <div class="login-header">
+        <img src="/static/logo.png" alt="Lovely Professional University Crest" class="login-logo" />
+        <p class="login-app-title">University Event Scheduling & Resource Optimization Matrix</p>
+        <h1 class="login-heading">Welcome Back</h1>
+        <p class="login-subheading">Enter your institutional credentials to continue</p>
+        <p class="login-subheading"><a href="/register" class="forgot-link">Student Registration</a></p>
+      </div>
+
+      <!-- Feedback Alert Box -->
+      <div id="alertBox" class="alert-box hidden" role="alert">
+        <span id="alertIcon">⚠️</span>
+        <span id="alertMessage"></span>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="email" class="form-label">Institutional Email</label>
+          <div class="input-wrapper">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              required
+              placeholder="e.g. yourname@lpu.in"
+              autocomplete="username"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input"
+              required
+              placeholder="••••••••••••"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              id="togglePassword"
+              class="password-toggle-btn"
+              title="Show / Hide Password"
+              aria-label="Toggle password visibility"
+            >
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row-remember">
+          <label class="remember-label">
+            <input type="checkbox" id="rememberMe" class="remember-checkbox" />
+            <span>Remember Me</span>
+          </label>
+          <a href="#" id="forgotPasswordLink" class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn-login">
+          <span id="btnText">Sign In</span>
+        </button>
+      </form>
+
+      <!-- Two-Factor Authentication Verification Form -->
+      <form id="twoFactorForm" class="hidden" novalidate>
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔐</div>
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Two-Factor Authentication</h2>
+          <p id="twoFactorNotice" style="font-size: 0.85rem; color: #94a3b8; line-height: 1.4;">
+            Enter the 6-digit verification code sent to <strong id="maskedEmailDisplay" style="color: #f58220;">your email</strong>.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="otpCode" class="form-label">6-Digit Verification Code</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="otpCode"
+              name="otp"
+              class="form-input"
+              required
+              maxlength="6"
+              inputmode="numeric"
+              pattern="[0-9]{6}"
+              placeholder="••••••"
+              autocomplete="one-time-code"
+              style="letter-spacing: 0.35em; font-size: 1.25rem; text-align: center; font-weight: 700;"
+            />
+          </div>
+        </div>
+
+        <button type="submit" id="verifyOtpBtn" class="btn-login" style="margin-top: 0.5rem;">
+          <span id="verifyBtnText">Verify & Continue</span>
+        </button>
+
+        <button type="button" id="resendOtpBtn" class="btn-secondary" style="margin-top: 0.75rem; width: 100%; padding: 0.65rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #e2e8f0; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">
+          Resend Code (<span id="cooldownTimer">60</span>s)
+        </button>
+
+        <div style="text-align: center; margin-top: 1.25rem;">
+          <a href="#" id="backToLoginBtn" class="forgot-link" style="font-size: 0.85rem;">← Back to Sign In</a>
+        </div>
+      </form>
+
+
+    </div>
+  </div>
+
+      <!-- Forgot Password Request Form -->
+      <form id="forgotPasswordForm" class="hidden" novalidate>
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔑</div>
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Password Recovery</h2>
+          <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.4;">
+            Enter your registered institutional email to receive a 6-digit recovery code.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="recoveryEmail" class="form-label">Registered Email</label>
+          <div class="input-wrapper">
+            <input
+              type="email"
+              id="recoveryEmail"
+              name="recoveryEmail"
+              class="form-input"
+              required
+              placeholder="e.g. yourname@gmail.com"
+              autocomplete="email"
+            />
+          </div>
+        </div>
+
+        <button type="submit" id="sendRecoveryBtn" class="btn-login" style="margin-top: 0.5rem;">
+          <span id="sendRecoveryBtnText">Send Recovery Code</span>
+        </button>
+
+        <div style="text-align: center; margin-top: 1.25rem;">
+          <a href="#" id="backFromForgotBtn" class="forgot-link" style="font-size: 0.85rem;">← Back to Sign In</a>
+        </div>
+      </form>
+
+      <!-- Reset Password Submission Form -->
+      <form id="resetPasswordForm" class="hidden" novalidate>
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🛡️</div>
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Set New Password</h2>
+          <p id="resetNoticeText" style="font-size: 0.85rem; color: #94a3b8; line-height: 1.4;">
+            Enter the 6-digit code sent to your email and your new secure password.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="resetCode" class="form-label">6-Digit Recovery Code</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="resetCode"
+              name="resetCode"
+              class="form-input"
+              required
+              maxlength="6"
+              inputmode="numeric"
+              pattern="[0-9]{6}"
+              placeholder="••••••"
+              autocomplete="one-time-code"
+              style="letter-spacing: 0.35em; font-size: 1.25rem; text-align: center; font-weight: 700;"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword" class="form-label">New Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              class="form-input"
+              required
+              placeholder="••••••••••••"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              id="toggleNewPassword"
+              class="password-toggle-btn"
+              title="Show / Hide Password"
+              aria-label="Toggle password visibility"
+            >
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="confirmNewPassword"
+              name="confirmNewPassword"
+              class="form-input"
+              required
+              placeholder="••••••••••••"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              id="toggleConfirmNewPassword"
+              class="password-toggle-btn"
+              title="Show / Hide Password"
+              aria-label="Toggle password visibility"
+            >
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <p style="font-size: 0.78rem; color: #94a3b8; line-height: 1.4; margin-bottom: 1rem;">
+          Must be at least 8 characters with uppercase, lowercase, number, and special character.
+        </p>
+
+        <button type="submit" id="resetPasswordSubmitBtn" class="btn-login" style="margin-top: 0.5rem;">
+          <span id="resetPasswordSubmitBtnText">Reset Password & Continue</span>
+        </button>
+
+        <div style="text-align: center; margin-top: 1.25rem;">
+          <a href="#" id="backFromResetBtn" class="forgot-link" style="font-size: 0.85rem;">← Back to Sign In</a>
+        </div>
+      </form>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    // Toggle Password Visibility
+    const toggleBtn = $('togglePassword');
+    const passwordInput = $('password');
+    toggleBtn.addEventListener('click', () => {
+      const isPass = passwordInput.getAttribute('type') === 'password';
+      passwordInput.setAttribute('type', isPass ? 'text' : 'password');
+      toggleBtn.textContent = isPass ? '🙈' : '👁️';
+    });
+
+    // Alert display helper
+    function showAlert(msg, isError = true) {
+      const box = $('alertBox');
+      const icon = $('alertIcon');
+      const text = $('alertMessage');
+      box.className = `alert-box ${isError ? 'alert-error' : 'alert-success'}`;
+      icon.textContent = isError ? '⚠️' : '✅';
+      text.textContent = msg;
+      box.classList.remove('hidden');
+    }
+
+    function hideAlert() {
+      $('alertBox').classList.add('hidden');
+    }
+
+    // Navigation View Manager
+    function showView(viewName) {
+      hideAlert();
+      $('loginForm').classList.add('hidden');
+      $('twoFactorForm').classList.add('hidden');
+      $('forgotPasswordForm').classList.add('hidden');
+      $('resetPasswordForm').classList.add('hidden');
+
+      if (viewName === 'login') {
+        $('loginForm').classList.remove('hidden');
+      } else if (viewName === '2fa') {
+        $('twoFactorForm').classList.remove('hidden');
+      } else if (viewName === 'forgot') {
+        $('forgotPasswordForm').classList.remove('hidden');
+        $('recoveryEmail').focus();
+      } else if (viewName === 'reset') {
+        $('resetPasswordForm').classList.remove('hidden');
+        $('resetCode').focus();
+      }
+    }
+
+    $('forgotPasswordLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      showView('forgot');
+    });
+    $('backFromForgotBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      showView('login');
+    });
+    $('backFromResetBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      showView('login');
+    });
+
+    // Toggle New Password Visibilities
+    $('toggleNewPassword').addEventListener('click', () => {
+      const isPass = $('newPassword').getAttribute('type') === 'password';
+      $('newPassword').setAttribute('type', isPass ? 'text' : 'password');
+      $('toggleNewPassword').textContent = isPass ? '🙈' : '👁️';
+    });
+    $('toggleConfirmNewPassword').addEventListener('click', () => {
+      const isPass = $('confirmNewPassword').getAttribute('type') === 'password';
+      $('confirmNewPassword').setAttribute('type', isPass ? 'text' : 'password');
+      $('toggleConfirmNewPassword').textContent = isPass ? '🙈' : '👁️';
+    });
+
+    // Password Recovery Flow State
+    let currentRecoveryTicket = null;
+    let recoveryEmailStored = '';
+
+    // Forgot Password Request
+    $('forgotPasswordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const email = $('recoveryEmail').value.trim();
+      if (!email) {
+        showAlert('Please enter your registered institutional email.');
+        $('recoveryEmail').focus();
+        return;
+      }
+
+      const sendBtn = $('sendRecoveryBtn');
+      const btnText = $('sendRecoveryBtnText');
+      sendBtn.disabled = true;
+      btnText.textContent = 'Sending Code...';
+
+      try {
+        const res = await fetch('/api/auth/password/forgot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.detail || 'Failed to initiate password recovery.');
+        }
+
+        currentRecoveryTicket = data.ticket;
+        recoveryEmailStored = email;
+
+        showAlert('If an account exists for this address, a 6-digit recovery code has been dispatched. Please enter it below.', false);
+        showView('reset');
+      } catch (err) {
+        showAlert(err.message, true);
+      } finally {
+        sendBtn.disabled = false;
+        btnText.textContent = 'Send Recovery Code';
+      }
+    });
+
+    // Reset Password Submission
+    $('resetPasswordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const code = $('resetCode').value.trim();
+      const newPassword = $('newPassword').value;
+      const confirmPassword = $('confirmNewPassword').value;
+
+      if (!code || code.length !== 6) {
+        showAlert('Please enter the 6-digit recovery code.');
+        $('resetCode').focus();
+        return;
+      }
+      if (!newPassword) {
+        showAlert('Please enter your new password.');
+        $('newPassword').focus();
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showAlert('New password and confirmation password do not match.');
+        $('confirmNewPassword').focus();
+        return;
+      }
+
+      const submitBtn = $('resetPasswordSubmitBtn');
+      const btnText = $('resetPasswordSubmitBtnText');
+      submitBtn.disabled = true;
+      btnText.textContent = 'Updating Password...';
+
+      try {
+        const res = await fetch('/api/auth/password/reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ticket: currentRecoveryTicket,
+            code: code,
+            new_password: newPassword,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.detail || 'Password reset failed. Please check the code.');
+        }
+
+        showAlert('Your password has been successfully reset! Please sign in with your new password.', false);
+        showView('login');
+        if (recoveryEmailStored) {
+          $('email').value = recoveryEmailStored;
+        }
+        $('password').value = '';
+        $('password').focus();
+      } catch (err) {
+        showAlert(err.message, true);
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Reset Password & Continue';
+      }
+    });
+
+    // Check URL routing on load
+    if (window.location.pathname === '/forgot-password' || window.location.hash === '#forgot') {
+      showView('forgot');
+    } else if (window.location.pathname === '/reset-password' || window.location.hash === '#reset') {
+      showView('reset');
+    }
+
+    // Fetch Auth Configuration (Demo accounts visibility)
+    async function loadAuthConfig() {
+      try {
+        const res = await fetch('/api/auth/config');
+        if (res.ok) {
+          const cfg = await res.json();
+          if (cfg.demo_mode) {
+            $('demoAccountsSection').classList.remove('hidden');
+          }
+        }
+      } catch (err) {
+        console.warn('Auth config check failed:', err);
+      }
+    }
+    loadAuthConfig();
+
+    // Demo Pills Quick Fill
+    document.querySelectorAll('.demo-pill-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $('email').value = btn.dataset.email;
+        $('password').value = btn.dataset.pass;
+        hideAlert();
+      });
+    });
+
+    // State for Two-Factor Authentication
+    let currentTicket = null;
+    let currentRememberMe = false;
+    let cooldownInterval = null;
+
+    function startCooldown(seconds) {
+      let left = seconds;
+      const resendBtn = $('resendOtpBtn');
+      if (!resendBtn) return;
+      resendBtn.disabled = true;
+      const timerEl = $('cooldownTimer');
+      if (timerEl) timerEl.textContent = left;
+      if (cooldownInterval) clearInterval(cooldownInterval);
+      cooldownInterval = setInterval(() => {
+        left -= 1;
+        if (left <= 0) {
+          clearInterval(cooldownInterval);
+          resendBtn.disabled = false;
+          resendBtn.textContent = 'Resend Code';
+        } else {
+          resendBtn.innerHTML = `Resend Code (<span id="cooldownTimer">${left}</span>s)`;
+        }
+      }, 1000);
+    }
+
+    // Two-Factor Verification Form Submission
+    $('twoFactorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const otp = $('otpCode').value.trim();
+      if (!otp || otp.length !== 6) {
+        showAlert('Please enter the complete 6-digit verification code.');
+        $('otpCode').focus();
+        return;
+      }
+
+      const verifyBtn = $('verifyOtpBtn');
+      const verifyBtnText = $('verifyBtnText');
+      verifyBtn.disabled = true;
+      verifyBtnText.textContent = 'Verifying Code...';
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+      try {
+        const res = await fetch('/api/auth/2fa/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ticket: currentTicket,
+            otp_code: otp,
+            remember_me: currentRememberMe,
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.detail || 'Verification failed. Please check the code.');
+        }
+
+        showAlert(data.message || 'Verification successful. Redirecting...', false);
+
+        if (data.user) {
+          sessionStorage.setItem('lpu_user', JSON.stringify(data.user));
+        }
+        if (data.csrf_token) {
+          sessionStorage.setItem('lpu_csrf_token', data.csrf_token);
+        }
+
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 500);
+
+      } catch (err) {
+        clearTimeout(timeoutId);
+        const msg = err.name === 'AbortError' ? 'Verification request timed out. Please try again.' : err.message;
+        showAlert(msg, true);
+        verifyBtn.disabled = false;
+        verifyBtnText.textContent = 'Verify & Continue';
+        $('otpCode').focus();
+      }
+    });
+
+    // Resend Two-Factor OTP Code
+    $('resendOtpBtn').addEventListener('click', async () => {
+      if (!currentTicket) return;
+      hideAlert();
+      const resendBtn = $('resendOtpBtn');
+      resendBtn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/2fa/resend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ticket: currentTicket }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.detail || 'Could not resend verification code.');
+        }
+
+        showAlert(data.message || 'New verification code requested.', false);
+        startCooldown(data.cooldown_seconds || 60);
+      } catch (err) {
+        showAlert(err.message, true);
+        resendBtn.disabled = false;
+      }
+    });
+
+    // Back from Two-Factor to Sign In
+    $('backToLoginBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      hideAlert();
+      if (cooldownInterval) clearInterval(cooldownInterval);
+      $('twoFactorForm').classList.add('hidden');
+      $('loginForm').classList.remove('hidden');
+      const loginBtn = $('loginBtn');
+      const btnText = $('btnText');
+      loginBtn.disabled = false;
+      btnText.textContent = 'Sign In';
+      $('password').value = '';
+      $('password').focus();
+    });
+
+    // Login Form Submission
+    $('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const email = $('email').value.trim();
+      const password = $('password').value;
+      const rememberMe = $('rememberMe').checked;
+
+      // Client-side validations
+      if (!email) {
+        showAlert('Please enter your institutional email address.');
+        $('email').focus();
+        return;
+      }
+      if (!password) {
+        showAlert('Please enter your password.');
+        $('password').focus();
+        return;
+      }
+
+      const loginBtn = $('loginBtn');
+      const btnText = $('btnText');
+      loginBtn.disabled = true;
+      btnText.textContent = 'Verifying Credentials...';
+
+      let is2faStep = false;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, remember_me: rememberMe }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.detail || 'Authentication failed. Please verify your credentials.');
+        }
+
+        // Two-Factor Challenge Required
+        if (data.requires_2fa) {
+          is2faStep = true;
+          currentTicket = data.ticket;
+          currentRememberMe = rememberMe;
+
+          const emailDisplay = $('maskedEmailDisplay');
+          if (emailDisplay && data.masked_email) {
+            emailDisplay.textContent = data.masked_email;
+          }
+
+          showAlert(data.message || 'Two-factor verification code requested.', false);
+          $('loginForm').classList.add('hidden');
+          $('twoFactorForm').classList.remove('hidden');
+          $('otpCode').value = '';
+          $('otpCode').focus();
+          startCooldown(data.cooldown_seconds || 60);
+          return;
+        }
+
+        // Direct Login Success
+        showAlert(data.message || 'Login successful. Redirecting...', false);
+
+        if (data.user) {
+          sessionStorage.setItem('lpu_user', JSON.stringify(data.user));
+        }
+        if (data.csrf_token) {
+          sessionStorage.setItem('lpu_csrf_token', data.csrf_token);
+        }
+
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 500);
+
+      } catch (err) {
+        clearTimeout(timeoutId);
+        const errorMsg = err.name === 'AbortError' 
+          ? 'Network request timed out. Please check your connection and try again.'
+          : err.message;
+        showAlert(errorMsg, true);
+      } finally {
+        // Always reset button state unless transitioned to 2FA interface
+        if (!is2faStep) {
+          loginBtn.disabled = false;
+          btnText.textContent = 'Sign In';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

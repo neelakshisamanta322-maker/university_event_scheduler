@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LPU - Multi-Department Event Scheduling & Resource Conflict Resolution System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;650;700;750;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;650;700;750;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=9.1" />
+</head>
+<body>
+
+  <!-- Top Bar / Header matching Reference Screenshot -->
+  <header class="app-header">
+    <div class="header-left">
+      <img src="/static/logo.png" alt="LPU Logo" class="lpu-logo" />
+      <div class="header-titles">
+        <h1 class="system-title">LPU – Multi-Department <span class="title-highlight">Event Scheduling</span></h1>
+        <p class="system-subtitle">Constraint Satisfaction • Heuristic Search • Priority Rules • Explainable AI</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <!-- AI Assistant Header Button -->
+      <button id="aiAssistantHeaderBtn" class="btn btn-ai" title="Consult AI Scheduling Assistant">
+        <span class="btn-icon">🤖</span> <span class="ai-btn-text">AI Assistant</span>
+        <span class="ai-pulse-dot"></span>
+      </button>
+
+      <!-- Role Switcher -->
+      <div class="role-selector-wrap" title="Current Role">
+        <span class="role-label">Role:</span>
+        <select id="roleSelector" class="role-select">
+          <option value="Admin">Admin</option>
+          <option value="Coordinator">Coordinator</option>
+          <option value="Viewer">Viewer</option>
+        </select>
+      </div>
+
+      <button id="demoBtn" class="btn btn-secondary">
+        <span class="btn-icon">↻</span> Load Demo Data
+      </button>
+
+      <button id="solveBtn" class="btn btn-primary">
+        <span class="btn-icon">⚡</span> <span id="solveBtnText">Generate Schedule</span>
+      </button>
+
+      <!-- Theme Mode Toggle dropdown/button matching screenshot -->
+      <div class="theme-dropdown-wrap">
+        <button id="modeToggle" class="btn btn-mode" title="Toggle Theme (4 Styles)">
+          <span id="themeIcon">☀️</span> <span id="themeText">Classic Light</span>
+        </button>
+        <div id="themeMenu" class="theme-menu hidden">
+          <div class="theme-option active" data-theme="light">
+            <span class="theme-dot light"></span> Classic Light
+          </div>
+          <div class="theme-option" data-theme="emerald">
+            <span class="theme-dot emerald"></span> Emerald Eco
+          </div>
+          <div class="theme-option" data-theme="dark">
+            <span class="theme-dot dark"></span> Midnight Blue
+          </div>
+          <div class="theme-option" data-theme="cyber">
+            <span class="theme-dot cyber"></span> Cyber Purple
+          </div>
+        </div>
+      </div>
+
+      <!-- User Profile Menu -->
+      <div class="user-profile-wrap" id="userProfileWrap">
+        <button id="userProfileBtn" class="user-profile-btn" title="User Profile">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div class="user-info-text">
+            <span class="user-name" id="userDisplayName">Administrator</span>
+            <span class="user-role-badge" id="userRoleBadge">Admin</span>
+          </div>
+          <span class="profile-caret">▾</span>
+        </button>
+        <div id="userProfileMenu" class="user-profile-menu hidden">
+          <div class="profile-menu-header">
+            <p class="profile-full-name" id="menuFullName">LPU Administrator</p>
+            <p class="profile-email" id="menuEmail">admin@lpu.in</p>
+          </div>
+          <div class="profile-menu-divider"></div>
+          <div class="profile-menu-item" id="userRoleInfoRow">
+            <span>Access Level:</span>
+            <strong id="menuRoleName" style="margin-left: auto; color: #f58220;">Admin</strong>
+          </div>
+          <div class="profile-menu-divider"></div>
+          <button type="button" class="profile-logout-btn" id="logoutBtn">
+            <span>🚪</span> Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- HERO CARD matching Reference Screenshot -->
+    <section class="hero-card">
+      <div class="hero-left">
+        <div class="hero-brand">
+          <!-- Slim vertical purple-to-cyan gradient accent beside the heading -->
+          <div class="hero-accent-bar"></div>
+          <div class="hero-headings-block">
+            <h1 class="hero-univ-title">Lovely Professional<br />University</h1>
+            <h2 class="hero-subhead-mint">Smart Campus.</h2>
+            <h2 class="hero-subhead-cyan">Smarter Scheduling.</h2>
+          </div>
+        </div>
+        <p class="hero-tagline">AI-Powered Automated Smart Scheduling & Resource Optimization Matrix</p>
+        <div class="hero-chips">
+          <span class="chip"><span class="chip-icon">👥</span> People</span>
+          <span class="chip-sep">|</span>
+          <span class="chip"><span class="chip-icon">🗓️</span> Events</span>
+          <span class="chip-sep">|</span>
+          <span class="chip"><span class="chip-icon">📚</span> Resources</span>
+          <span class="chip-sep">|</span>
+          <span class="chip"><span class="chip-icon">🌿</span> Better Tomorrow</span>
+        </div>
+        <!-- Flowing wave decoration matching reference screenshot -->
+        <div class="hero-wave-bottom" aria-hidden="true">
+          <svg viewBox="0 0 500 120" preserveAspectRatio="none">
+            <path d="M0,50 C150,110 320,10 500,70 L500,120 L0,120 Z" fill="url(#heroWaveGradient)"></path>
+            <defs>
+              <linearGradient id="heroWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="var(--hero-wave-start, rgba(168, 85, 247, 0.32))" />
+                <stop offset="100%" stop-color="var(--hero-wave-end, rgba(6, 182, 212, 0.12))" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-image-wrapper">
+          <img src="/static/campus.png" alt="LPU Campus Amphitheatre" class="hero-campus-img" />
+          <div class="hero-watermark">
+            <span class="cursive-quote" id="heroQuote">"Turning Ideas into Events"</span>
+            <div class="hero-quote-underline"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAT CARDS ROW (5 cards matching screenshot) -->
+    <section class="stat-cards-row">
+      <div class="stat-card" data-entity="departments">
+        <div class="stat-icon-box purple">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">DEPARTMENTS</span>
+          <strong class="stat-value" id="statDepts">3</strong>
+        </div>
+      </div>
+
+      <div class="stat-card" data-entity="events">
+        <div class="stat-icon-box blue">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">EVENTS</span>
+          <strong class="stat-value" id="statEvents">7</strong>
+        </div>
+      </div>
+
+      <div class="stat-card" data-entity="venues">
+        <div class="stat-icon-box red">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">VENUES</span>
+          <strong class="stat-value" id="statVenues">4</strong>
+        </div>
+      </div>
+
+      <div class="stat-card" data-entity="staff">
+        <div class="stat-icon-box orange">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">STAFF</span>
+          <strong class="stat-value" id="statStaff">3</strong>
+        </div>
+      </div>
+
+      <div class="stat-card" data-entity="equipment">
+        <div class="stat-icon-box green">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">EQUIPMENT TYPES</span>
+          <strong class="stat-value" id="statEquipment">3</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEM MODEL SECTION matching Reference Screenshot -->
+    <section class="problem-model-section">
+      <div class="section-header">
+        <h3 class="section-title">
+          <span class="gear-icon">⚙️</span> Problem Model
+        </h3>
+        <p class="section-desc">
+          University events, venues, equipment, staff and timing requirements are modeled as interconnected constraints. Hard restrictions are mandatory; soft preferences are optimized where possible.
+        </p>
+      </div>
+
+      <div class="constraints-cards-grid">
+        <!-- Hard Constraints Card (Blue theme) -->
+        <div class="constraint-box hard-constraints-card">
+          <div class="constraint-box-header">
+            <span class="constraint-type-icon blue-lock">🔒</span>
+            <h4 class="constraint-type-title blue-text">Hard constraints</h4>
+          </div>
+          <div class="pills-list">
+            <div class="constraint-pill" data-constraint="capacity">
+              <div class="pill-content">
+                <span class="pill-icon blue-icon">👥</span>
+                <span class="pill-title">Capacity and venue type</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+            <div class="constraint-pill" data-constraint="availability">
+              <div class="pill-content">
+                <span class="pill-icon blue-icon">⏰</span>
+                <span class="pill-title">Venue/staff availability</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+            <div class="constraint-pill" data-constraint="no-overlap">
+              <div class="pill-content">
+                <span class="pill-icon blue-icon">🔗</span>
+                <span class="pill-title">No overlapping resource use</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+            <div class="constraint-pill" data-constraint="equipment-limits">
+              <div class="pill-content">
+                <span class="pill-icon blue-icon">🖥️</span>
+                <span class="pill-title">Equipment quantity limits</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+            <div class="constraint-pill" data-constraint="allowed-times">
+              <div class="pill-content">
+                <span class="pill-icon blue-icon">📅</span>
+                <span class="pill-title">Allowed/fixed event times</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Soft Preferences Card (Orange/Peach theme) -->
+        <div class="constraint-box soft-preferences-card">
+          <div class="constraint-box-header">
+            <span class="constraint-type-icon orange-sparkle">✨</span>
+            <h4 class="constraint-type-title orange-text">Soft preferences</h4>
+          </div>
+          <div class="pills-list">
+            <div class="constraint-pill" data-preference="preferred-venue">
+              <div class="pill-content">
+                <span class="pill-icon orange-icon">📍</span>
+                <span class="pill-title">Preferred venue</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+            <div class="constraint-pill" data-preference="preferred-hour">
+              <div class="pill-content">
+                <span class="pill-icon orange-icon">🕒</span>
+                <span class="pill-title">Preferred start hour</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+            <div class="constraint-pill" data-preference="avoid-late">
+              <div class="pill-content">
+                <span class="pill-icon orange-icon">🌙</span>
+                <span class="pill-title">Avoid late sessions</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+            <div class="constraint-pill" data-preference="priority-order">
+              <div class="pill-content">
+                <span class="pill-icon orange-icon">📋</span>
+                <span class="pill-title">Priority-aware search order</span>
+              </div>
+              <span class="pill-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE INTERACTIVE WORKSPACE (Tabs, Timetable, What-If, Explainable AI) -->
+    <section class="workspace-section">
+      <div class="workspace-tabs-bar">
+        <div class="tabs-nav">
+          <button class="tab-btn active" data-tab="timetable">
+            <span class="tab-icon">📅</span> Timetable Grid
+          </button>
+          <button class="tab-btn" data-tab="events">
+            <span class="tab-icon">📋</span> Events & Resources
+          </button>
+          <button class="tab-btn" data-tab="explainable">
+            <span class="tab-icon">💡</span> Explainable AI
+          </button>
+          <button class="tab-btn" data-tab="whatif">
+            <span class="tab-icon">⚡</span> What-If Simulator
+          </button>
+          <button class="tab-btn" data-tab="analytics">
+            <span class="tab-icon">📊</span> Analytics & Solvers
+          </button>
+        </div>
+
+        <div class="export-actions">
+          <span class="export-label">Export:</span>
+          <a href="/api/export/csv" class="btn btn-export" download title="Download CSV Schedule">CSV</a>
+          <a href="/api/export/pdf" class="btn btn-export" download title="Download Official LPU PDF">PDF</a>
+          <a href="/api/export/ics" class="btn btn-export" download title="Download iCalendar for Google/Outlook">iCal (.ics)</a>
+        </div>
+      </div>
+
+      <!-- TAB 1: TIMETABLE GRID VIEW -->
+      <div id="timetableTab" class="tab-pane active">
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div>
+              <h3 class="panel-title">🗓️ University Master Schedule</h3>
+              <p class="panel-subtitle">Interactive date-wise visual timetable color-coded by department. Click any event card for AI explanation.</p>
+            </div>
+            <div class="grid-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="heatmapToggle" />
+                <span class="slider"></span>
+              </label>
+              <span class="control-label">🔥 Conflict Heatmap</span>
+              <button id="addEventBtn" class="btn btn-sm btn-primary">+ Add Event</button>
+            </div>
+          </div>
+
+          <!-- Date-Wise View Toolbar & Navigation -->
+          <div class="timetable-toolbar">
+            <!-- View Mode Switcher -->
+            <div class="view-mode-group">
+              <button type="button" class="view-btn active" data-view="day" id="viewDayBtn">
+                <span class="view-icon">📅</span> Day View
+              </button>
+              <button type="button" class="view-btn" data-view="week" id="viewWeekBtn">
+                <span class="view-icon">🗓️</span> Week View
+              </button>
+              <button type="button" class="view-btn" data-view="month" id="viewMonthBtn">
+                <span class="view-icon">📆</span> Month View
+              </button>
+            </div>
+
+            <!-- Date Navigation (Day/Week/Month) -->
+            <div class="date-nav-group">
+              <button type="button" class="nav-arrow-btn" id="prevDateBtn" title="Previous Date">‹</button>
+              <div class="current-date-display" id="datePickerTrigger" title="Click to pick a specific date">
+                <span class="calendar-icon">📅</span>
+                <span id="currentDateHeading" class="current-date-title">Monday, October 05, 2026</span>
+                <input type="date" id="timetableDatePicker" class="timetable-date-picker" value="2026-10-05" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" />
+              </div>
+              <button type="button" class="nav-arrow-btn" id="nextDateBtn" title="Next Date">›</button>
+              <button type="button" class="btn btn-sm btn-secondary" id="todayDateBtn" title="Jump to Demo Day (Oct 5)">Demo (Oct 5)</button>
+            </div>
+
+            <!-- Interval Selector (Day View) -->
+            <div class="time-interval-group" id="intervalSelectorGroup">
+              <label for="intervalSelect" class="interval-label">Interval:</label>
+              <select id="intervalSelect" class="interval-select">
+                <option value="60" selected>60 mins (Hourly - Default)</option>
+                <option value="30">30 mins</option>
+                <option value="15">15 mins</option>
+              </select>
+              <label class="fit-screen-label" style="display:inline-flex; align-items:center; gap:5px; margin-left:8px; font-size:0.75rem; font-weight:600; cursor:pointer;" title="Fit entire timetable to screen width without horizontal scroll">
+                <input type="checkbox" id="fitScreenToggle" style="cursor:pointer;" />
+                <span>Fit Screen</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Filter & Search Controls Bar -->
+          <div class="timetable-filters-bar">
+            <div class="filter-item search-filter">
+              <span class="search-icon">🔍</span>
+              <input
+                type="search"
+                id="filterSearchInput"
+                name="timetable_event_search_query"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                data-lpignore="true"
+                data-form-type="other"
+                class="filter-input"
+                placeholder="Search event by title..."
+              />
+            </div>
+
+            <div class="filter-item">
+              <label for="filterDeptSelect">Department:</label>
+              <select id="filterDeptSelect" class="filter-select">
+                <option value="all">All Departments</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label for="filterVenueSelect">Venue:</label>
+              <select id="filterVenueSelect" class="filter-select">
+                <option value="all">All Venues</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label for="filterPrioritySelect">Priority:</label>
+              <select id="filterPrioritySelect" class="filter-select">
+                <option value="all">All Priorities</option>
+                <option value="critical">Critical</option>
+                <option value="high">High</option>
+                <option value="normal">Normal</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+
+            <button type="button" id="clearFiltersBtn" class="btn btn-sm btn-outline-secondary" title="Clear all active filters">
+              ↺ Clear Filters
+            </button>
+            
+            <span id="activeFilterBadge" class="filter-badge hidden">Filtered</span>
+          </div>
+
+          <!-- Schedule summary stats badge bar -->
+          <div id="scheduleStatsBar" class="schedule-stats-bar">
+            <span class="stat-chip"><strong id="schedCount">0</strong> Scheduled</span>
+            <span class="stat-chip warning"><strong id="unresCount">0</strong> Unresolved</span>
+            <span class="stat-chip"><strong id="softCostVal">0</strong> Soft Cost Penalty</span>
+            <span class="stat-chip"><strong id="solverTimeVal">0ms</strong> Search Time</span>
+            <span class="stat-chip info"><strong id="nodesCountVal">0</strong> Explored Nodes</span>
+          </div>
+
+          <!-- The timetable visual matrix -->
+          <div class="timetable-scroll-wrapper">
+            <div id="timetableGrid" class="timetable-grid">
+              <!-- Rendered dynamically by app.js -->
+            </div>
+          </div>
+
+          <!-- Unresolved Conflicts Box (Kept completely separate from the scheduled venue grid) -->
+          <div id="unresolvedBox" class="unresolved-card-wrap hidden">
+            <div class="unresolved-header">
+              <span class="warning-icon" style="font-size:1.4rem; flex-shrink:0;">⚠️</span>
+              <div>
+                <h4 style="margin:0; font-size:1rem; font-weight:700;">Unresolved Conflicts Panel — Events Excluded from Venue Grid</h4>
+                <p style="margin:4px 0 0; font-size:0.8rem; opacity:0.85;">These events could not be scheduled without constraint violations. No fake venue or slot was assigned.</p>
+              </div>
+            </div>
+            <div id="unresolvedList" class="unresolved-items"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: EVENTS & RESOURCES DIRECTORY -->
+      <div id="directoryTab" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div>
+              <h3 class="panel-title">📚 University Events & Directory</h3>
+              <p class="panel-subtitle">Manage events, venues, faculty staff, and equipment inventory.</p>
+            </div>
+            <div class="sub-nav-tabs">
+              <button class="sub-tab-btn active" data-subtab="eventsSubTab">Events</button>
+              <button class="sub-tab-btn" data-subtab="venuesSubTab">Venues</button>
+              <button class="sub-tab-btn" data-subtab="staffSubTab">Staff</button>
+              <button class="sub-tab-btn" data-subtab="equipmentSubTab">Equipment</button>
+            </div>
+          </div>
+
+          <!-- Events SubTab -->
+          <div id="eventsSubTab" class="subtab-content active">
+            <div class="table-responsive">
+              <table class="styled-table" id="eventsTable">
+                <thead>
+                  <tr>
+                    <th>Event Title</th>
+                    <th>Department</th>
+                    <th>Duration</th>
+                    <th>Attendance</th>
+                    <th>Venue Type</th>
+                    <th>Priority</th>
+                    <th>ML Conflict Risk</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="eventsTableBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Venues SubTab -->
+          <div id="venuesSubTab" class="subtab-content">
+            <div class="table-responsive">
+              <table class="styled-table" id="venuesTable">
+                <thead>
+                  <tr>
+                    <th>Venue Name</th>
+                    <th>Type</th>
+                    <th>Capacity</th>
+                    <th>Campus Location</th>
+                    <th>Slots Open</th>
+                  </tr>
+                </thead>
+                <tbody id="venuesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Staff SubTab -->
+          <div id="staffSubTab" class="subtab-content">
+            <div class="table-responsive">
+              <table class="styled-table" id="staffTable">
+                <thead>
+                  <tr>
+                    <th>Staff Name</th>
+                    <th>Role</th>
+                    <th>Expertise</th>
+                    <th>Available Slots</th>
+                  </tr>
+                </thead>
+                <tbody id="staffTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Equipment SubTab -->
+          <div id="equipmentSubTab" class="subtab-content">
+            <div class="table-responsive">
+              <table class="styled-table" id="equipmentTable">
+                <thead>
+                  <tr>
+                    <th>Equipment Name</th>
+                    <th>Category</th>
+                    <th>Quantity In Stock</th>
+                  </tr>
+                </thead>
+                <tbody id="equipmentTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: EXPLAINABLE AI PANEL -->
+      <div id="explainTab" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div>
+              <h3 class="panel-title">🧠 Explainable AI Decision Inspector</h3>
+              <p class="panel-subtitle">Transparent justification breakdown: hard rules satisfied, preferences sacrificed, and conflict attributions.</p>
+            </div>
+            <div class="event-picker-wrap">
+              <label for="explainEventSelect">Inspect Event:</label>
+              <select id="explainEventSelect" class="form-select"></select>
+            </div>
+          </div>
+
+          <div id="explainReport" class="explain-report-grid">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: WHAT-IF SCENARIO SIMULATOR -->
+      <div id="whatifTab" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div>
+              <h3 class="panel-title" style="display: flex; align-items: center; gap: 10px;">
+                <span>🔮 What-If Scenario Simulator</span>
+                <span id="whatIfStatusBadge" class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); font-size: 0.75rem; padding: 4px 10px;">Ready</span>
+              </h3>
+              <p class="panel-subtitle">Modify parameters in real-time without altering master data. Re-solves instantly and displays a diff.</p>
+            </div>
+            <div class="header-btn-group" style="display: flex; gap: 8px;">
+              <button id="resetWhatIfBtn" class="btn btn-secondary">
+                <span>↺</span> Reset Simulation
+              </button>
+              <button id="runWhatIfBtn" class="btn btn-primary">
+                <span>🚀</span> Run Simulation
+              </button>
+            </div>
+          </div>
+
+          <div class="whatif-controls-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+            <div class="whatif-box">
+              <h4>🎯 Override Event Priority or Attendance</h4>
+              <div class="form-group">
+                <label>Target Event:</label>
+                <select id="whatIfEventSelect" class="form-select"></select>
+              </div>
+              <div class="form-group">
+                <label>Simulated Priority:</label>
+                <select id="whatIfPrioritySelect" class="form-select">
+                  <option value="critical">Critical (Preempts others)</option>
+                  <option value="high">High</option>
+                  <option value="normal">Normal</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Simulated Expected Attendance <span id="whatIfOrigAttendance" style="font-size: 0.8rem; color: #94a3b8; font-weight: normal;"></span>:</label>
+                <input type="number" id="whatIfAttendanceInput" class="form-input" min="1" max="1000" value="100" />
+              </div>
+            </div>
+
+            <div class="whatif-box">
+              <h4>🏛️ Override Venue Capacity</h4>
+              <div class="form-group">
+                <label>Target Venue:</label>
+                <select id="whatIfVenueSelect" class="form-select"></select>
+              </div>
+              <div class="form-group">
+                <label>Simulated Capacity <span id="whatIfOrigCapacity" style="font-size: 0.8rem; color: #94a3b8; font-weight: normal;"></span>:</label>
+                <input type="number" id="whatIfVenueCapacity" class="form-input" min="1" max="2000" value="350" />
+              </div>
+            </div>
+
+            <div class="whatif-box">
+              <h4>🚫 Temporarily Unavailable Venue</h4>
+              <div class="form-group">
+                <label>Mark Venue Unavailable:</label>
+                <select id="whatIfUnavailableVenueSelect" class="form-select">
+                  <option value="">None (All Venues Available)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Unavailability Reason:</label>
+                <select id="whatIfUnavailabilityReasonSelect" class="form-select">
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="Emergency">Emergency</option>
+                  <option value="Renovation">Renovation</option>
+                  <option value="Technical Issue">Technical Issue</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="whatif-box">
+              <h4>⏰ Override Event Time</h4>
+              <div class="form-group">
+                <label>Target Event:</label>
+                <select id="whatIfTimeShiftEventSelect" class="form-select">
+                  <option value="">-- None (Keep Original Times) --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Current Start Time: <span id="whatIfOrigStartTime" style="font-size: 0.85rem; color: #60a5fa; font-weight: 600;">Select an event</span></label>
+              </div>
+              <div class="form-group">
+                <label>Simulated Start Hour (0–23):</label>
+                <select id="whatIfSimulatedStartHourSelect" class="form-select">
+                  <option value="">-- Select Start Hour --</option>
+                  <option value="0">00:00 (12 AM)</option>
+                  <option value="1">01:00 (1 AM)</option>
+                  <option value="2">02:00 (2 AM)</option>
+                  <option value="3">03:00 (3 AM)</option>
+                  <option value="4">04:00 (4 AM)</option>
+                  <option value="5">05:00 (5 AM)</option>
+                  <option value="6">06:00 (6 AM)</option>
+                  <option value="7">07:00 (7 AM)</option>
+                  <option value="8">08:00 (8 AM)</option>
+                  <option value="9">09:00 (9 AM)</option>
+                  <option value="10">10:00 (10 AM)</option>
+                  <option value="11">11:00 (11 AM)</option>
+                  <option value="12">12:00 (12 PM)</option>
+                  <option value="13">13:00 (1 PM)</option>
+                  <option value="14">14:00 (2 PM)</option>
+                  <option value="15">15:00 (3 PM)</option>
+                  <option value="16">16:00 (4 PM)</option>
+                  <option value="17">17:00 (5 PM)</option>
+                  <option value="18">18:00 (6 PM)</option>
+                  <option value="19">19:00 (7 PM)</option>
+                  <option value="20">20:00 (8 PM)</option>
+                  <option value="21">21:00 (9 PM)</option>
+                  <option value="22">22:00 (10 PM)</option>
+                  <option value="23">23:00 (11 PM)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expandable Advanced Scenario & Constraint Controls Accordion -->
+          <div id="advancedScenarioControls" class="advanced-controls-wrap" style="margin-top: 16px; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; background: rgba(15, 23, 42, 0.5); overflow: hidden;">
+            <button id="toggleAdvancedControlsBtn" type="button" style="width: 100%; padding: 12px 16px; background: rgba(30, 41, 59, 0.6); border: none; color: #93c5fd; font-weight: 600; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+              <span>⚙️ Advanced Scenario & Constraint Controls</span>
+              <span id="advancedChevron">▼</span>
+            </button>
+            <div id="advancedControlsBody" class="hidden" style="padding: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+              <div class="form-group">
+                <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.9rem;">
+                  <input type="checkbox" id="whatIfPreserveTimeCheck" />
+                  <span>Preserve Original Time</span>
+                </label>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.9rem;">
+                  <input type="checkbox" id="whatIfPreserveVenueCheck" />
+                  <span>Preserve Original Venue</span>
+                </label>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.9rem;">
+                  <input type="checkbox" id="whatIfAllowTimeShiftCheck" checked />
+                  <span>Allow Time Shift</span>
+                </label>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.9rem;">
+                  <input type="checkbox" id="whatIfAllowVenueShiftCheck" checked />
+                  <span>Allow Venue Shift</span>
+                </label>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.9rem;">
+                  <input type="checkbox" id="whatIfAllowCascadeCheck" checked />
+                  <span>Allow Cascade Shifts</span>
+                </label>
+              </div>
+              <div class="form-group">
+                <label style="color: #cbd5e1; font-size: 0.85rem;">Max Allowed Soft Cost:</label>
+                <input type="number" id="whatIfMaxSoftCostInput" class="form-input" value="1000" min="0" />
+              </div>
+              <div class="form-group">
+                <label style="color: #cbd5e1; font-size: 0.85rem;">Max Cascade Depth:</label>
+                <input type="number" id="whatIfMaxCascadeDepthInput" class="form-input" value="3" min="1" max="10" />
+              </div>
+              <div class="form-group">
+                <label style="color: #cbd5e1; font-size: 0.85rem;">Priority Handling:</label>
+                <select id="whatIfPriorityHandlingSelect" class="form-select">
+                  <option value="strict">Strict Priority (High Preempts Low)</option>
+                  <option value="balanced">Balanced (Minimize Soft Cost)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label style="color: #cbd5e1; font-size: 0.85rem;">Conflict Resolution Mode:</label>
+                <select id="whatIfConflictResolutionSelect" class="form-select">
+                  <option value="auto">Automatic (Auto-reschedule downstream)</option>
+                  <option value="interactive">Interactive (Report conflicts only)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading Indicator -->
+          <div id="simulationLoading" class="loading-wrap hidden" style="margin-top: 16px; text-align: center; padding: 16px; background: rgba(30, 41, 59, 0.5); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">
+            <div class="spinner" style="margin: 0 auto 8px auto; width: 28px; height: 28px; border: 3px solid rgba(59, 130, 246, 0.3); border-top-color: #38bdf8; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <span id="simulationLoadingMsg" style="color: #38bdf8; font-weight: 600; font-size: 0.9rem;">Running constraint satisfaction solver simulation...</span>
+          </div>
+
+          <!-- Simulation Error Card -->
+          <div id="simulationErrorCard" class="error-card hidden" style="margin-top: 16px; padding: 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 12px; color: #fca5a5;">
+            <strong style="display: block; font-size: 0.95rem; margin-bottom: 4px;">⚠️ Simulation Error</strong>
+            <span id="simulationErrorMsg" style="font-size: 0.85rem; display: block; margin-bottom: 8px;">An unexpected error occurred during simulation.</span>
+            <button id="retrySimulationBtn" class="btn btn-sm btn-secondary" style="font-size: 0.8rem; background: #dc2626; color: #ffffff; border: none;">Retry Simulation</button>
+          </div>
+
+          <!-- Impact Summary Cards (Hidden initially) -->
+          <div id="whatIfImpactSummary" class="impact-summary-grid hidden" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 20px;">
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Schedule Impact</span>
+              <strong id="impactSchedVal" style="font-size: 1.1rem; color: #38bdf8;">None</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Venue Impact</span>
+              <strong id="impactVenueVal" style="font-size: 1.1rem; color: #fb923c;">None</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Time Impact</span>
+              <strong id="impactTimeVal" style="font-size: 1.1rem; color: #c084fc;">None</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Cost Impact</span>
+              <strong id="impactCostVal" style="font-size: 1.1rem; color: #4ade80;">None</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Total Changes</span>
+              <strong id="impactChangesVal" style="font-size: 1.1rem; color: #f43f5e;">0</strong>
+            </div>
+          </div>
+
+          <!-- Granular Impact Metrics (Hidden initially) -->
+          <div id="whatIfGranularSummary" class="impact-summary-grid hidden" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 10px;">
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Changed Events</span>
+              <strong id="impactChangedEventsVal" style="font-size: 1.1rem; color: #38bdf8;">0</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Time Shifts</span>
+              <strong id="impactTimeShiftsVal" style="font-size: 1.1rem; color: #c084fc;">0</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Venue Shifts</span>
+              <strong id="impactVenueShiftsVal" style="font-size: 1.1rem; color: #fb923c;">0</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Unresolved Events</span>
+              <strong id="impactUnresolvedVal" style="font-size: 1.1rem; color: #f43f5e;">0</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Hard Violations</span>
+              <strong id="impactViolationsVal" style="font-size: 1.1rem; color: #f43f5e;">0</strong>
+            </div>
+            <div class="impact-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 12px; text-align: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; display: block;">Feasibility</span>
+              <strong id="impactFeasibilityVal" style="font-size: 0.85rem; color: #4ade80;">—</strong>
+            </div>
+          </div>
+
+          <!-- Dependency Chain Flow -->
+          <div id="whatIfDependencyChain" class="dependency-chain-wrap hidden" style="margin-top: 16px; padding: 12px 16px; background: rgba(15, 23, 42, 0.6); border: 1px dashed rgba(59, 130, 246, 0.4); border-radius: 12px;">
+            <strong style="font-size: 0.85rem; color: #60a5fa; display: block; margin-bottom: 6px;">🔗 Cascade Dependency Chain:</strong>
+            <div id="dependencyChainList" style="font-family: 'Space Grotesk', monospace; font-size: 0.85rem; color: #cbd5e1; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;"></div>
+          </div>
+
+          <!-- What-If Diff Results Table -->
+          <div class="whatif-diff-wrapper" style="margin-top: 24px;">
+            <h4 class="diff-title">Simulation Impact & Schedule Diffs:</h4>
+            <div id="whatifDiffEmpty" class="empty-diff">Run a simulation above to compare with the baseline schedule.</div>
+            <table class="styled-table hidden" id="whatIfDiffTable">
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Change Type</th>
+                  <th>Before</th>
+                  <th>After</th>
+                  <th>Impact Details</th>
+                  <th>Cost</th>
+                </tr>
+              </thead>
+              <tbody id="whatIfDiffBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Scenario History -->
+          <div id="scenarioHistorySection" class="scenario-history-wrapper" style="margin-top: 32px;">
+            <h4 class="diff-title" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>📜 Scenario Simulation History</span>
+              <button id="clearHistoryBtn" class="btn btn-sm btn-secondary" style="font-size: 0.75rem;">Clear History</button>
+            </h4>
+            <div id="scenarioHistoryEmpty" class="empty-diff" style="padding: 16px;">No previous simulation runs in this session.</div>
+            <table class="styled-table hidden" id="scenarioHistoryTable">
+              <thead>
+                <tr>
+                  <th>Scenario ID</th>
+                  <th>Target Event</th>
+                  <th>Changed Parameter</th>
+                  <th>Before State</th>
+                  <th>After State</th>
+                  <th>Change Type</th>
+                  <th>Soft Cost</th>
+                  <th>Changes</th>
+                </tr>
+              </thead>
+              <tbody id="scenarioHistoryBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: ANALYTICS & SOLVER BENCHMARKS -->
+      <div id="analyticsTab" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div>
+              <h3 class="panel-title">📈 System Analytics & Solver Benchmarks</h3>
+              <p class="panel-subtitle">Real-time venue utilization, department equity, and CSP vs Google OR-Tools CP-SAT cross-check.</p>
+            </div>
+            <button id="refreshAnalyticsBtn" class="btn btn-secondary btn-sm">Refresh Stats</button>
+          </div>
+
+          <div class="analytics-grid">
+            <!-- Venue Utilization Card -->
+            <div class="analytics-card">
+              <h4>🏛️ Campus Venue Utilization</h4>
+              <div id="venueUtilList" class="utilization-bars-list"></div>
+            </div>
+
+            <!-- Department Equity Card -->
+            <div class="analytics-card">
+              <h4>🎓 Department Equity & Satisfaction</h4>
+              <div id="deptEquityList" class="equity-list"></div>
+            </div>
+
+            <!-- OR-Tools Cross-Check Benchmark Card -->
+            <div class="analytics-card full-width">
+              <h4>⚖️ Solver Engine Benchmark: Custom CSP vs Google OR-Tools CP-SAT</h4>
+              <div id="solverBenchmarkInfo" class="benchmark-details">
+                <p class="muted">Click "Benchmark with OR-Tools" to run both solvers side-by-side on current constraints.</p>
+              </div>
+              <button id="runOrtollsBtn" class="btn btn-sm btn-secondary" style="margin-top: 10px;">
+                Run Google OR-Tools Cross-Check
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- MODAL: ADD / EDIT EVENT -->
+  <div id="eventModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Academic Event</h3>
+        <button id="closeModalBtn" class="close-btn">&times;</button>
+      </div>
+      <form id="eventForm" class="modal-form">
+        <div id="eventFormError" class="form-error-banner hidden" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; border-radius: 8px; padding: 10px 14px; font-size: 0.875rem; margin-bottom: 14px; font-weight: 500;"></div>
+        <div class="form-group">
+          <label for="eventTitleInput">Event Title *</label>
+          <input type="text" id="eventTitleInput" class="form-input" placeholder="e.g. Next-Gen Cloud Workshop" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="eventDeptSelect">Department *</label>
+            <select id="eventDeptSelect" class="form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label for="eventPrioritySelect">Priority *</label>
+            <select id="eventPrioritySelect" class="form-select" required>
+              <option value="critical">Critical</option>
+              <option value="high">High</option>
+              <option value="normal" selected>Normal</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="eventDurationInput">Duration (Hours) *</label>
+            <input type="number" id="eventDurationInput" class="form-input" min="1" max="6" value="1" required />
+          </div>
+          <div class="form-group">
+            <label for="eventAttendanceInput">Expected Attendance *</label>
+            <input type="number" id="eventAttendanceInput" class="form-input" min="5" max="1000" value="50" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="eventVenueTypeSelect">Required Venue Type</label>
+            <select id="eventVenueTypeSelect" class="form-select">
+              <option value="">Any Suitable Venue</option>
+              <option value="auditorium">Auditorium</option>
+              <option value="seminar">Seminar Hall</option>
+              <option value="lab">Lab</option>
+              <option value="general">General Classroom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="eventPreferredHourInput">Preferred Start Hour (0-23)</label>
+            <input type="number" id="eventPreferredHourInput" class="form-input" min="9" max="17" value="10" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="cancelModalBtn" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CONSTRAINT PILL DETAIL (Clicking any pill in Problem Model) -->
+  <div id="pillDetailModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="pillDetailTitle">Constraint Details</h3>
+        <button id="closePillModalBtn" class="close-btn">&times;</button>
+      </div>
+      <div id="pillDetailBody" class="pill-detail-body"></div>
+      <div class="modal-footer">
+        <button id="okPillModalBtn" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>Lovely Professional University • AI-Powered Event Scheduling & Resource Conflict Resolution Engine</p>
+      <p class="muted">Powered by CSP Heuristics, Google OR-Tools CP-SAT, and Scikit-Learn Predictive Modeling</p>
+    </div>
+  </footer>
+
+  <!-- Floating AI Assistant Trigger Button -->
+  <button id="aiAssistantFloatBtn" class="ai-assistant-float-btn" title="Open AI Scheduling Assistant">
+    <span class="float-icon">🤖</span>
+    <span>Ask AI Assistant</span>
+    <span class="ai-pulse-dot"></span>
+  </button>
+
+  <!-- Modern Floating AI Chat Window -->
+  <div id="aiChatWindow" class="ai-chat-window hidden" role="region" aria-label="AI Scheduling Assistant">
+    <!-- Header -->
+    <div class="ai-chat-header">
+      <div class="ai-header-left">
+        <div class="ai-header-avatar">🤖</div>
+        <div class="ai-header-titles">
+          <span class="ai-header-title">LPU AI Assistant</span>
+          <span class="ai-header-sub" id="aiProviderBadge">Live Schedule Grounded</span>
+        </div>
+      </div>
+      <div class="ai-header-controls">
+        <button type="button" id="aiSettingsBtn" class="ai-control-btn" title="Configure LLM & Model Settings">⚙️</button>
+        <button type="button" id="aiClearHistoryBtn" class="ai-control-btn" title="Clear Chat History">🗑️</button>
+        <button type="button" id="aiMinimizeBtn" class="ai-control-btn" title="Minimize">−</button>
+        <button type="button" id="aiCloseBtn" class="ai-control-btn" title="Close">✕</button>
+      </div>
+    </div>
+
+    <!-- Collapsible LLM Settings Panel -->
+    <div id="aiSettingsPanel" class="ai-settings-panel hidden">
+      <div class="ai-settings-header">
+        <span class="ai-settings-title">⚙️ LLM Provider & Model Settings</span>
+        <button type="button" id="aiSettingsCloseBtn" class="ai-control-btn" title="Close Settings">✕</button>
+      </div>
+      <div class="ai-settings-body">
+        <div class="ai-setting-field">
+          <label for="aiProviderSelect">AI / LLM Provider</label>
+          <select id="aiProviderSelect" class="ai-setting-select">
+            <option value="auto">🤖 Auto-Detect (Best Available)</option>
+            <option value="gemini">🔷 Google Gemini (Gemini 2.0 / 1.5 Flash)</option>
+            <option value="openai">🟢 OpenAI / Groq / DeepSeek</option>
+            <option value="ollama">🦙 Ollama (Local Offline LLM)</option>
+            <option value="anthropic">🔶 Anthropic Claude</option>
+            <option value="local">🏠 Local Grounded Engine (Offline)</option>
+          </select>
+        </div>
+
+        <div class="ai-setting-field" id="aiApiKeyField">
+          <label for="aiApiKeyInput">API Key <span class="ai-setting-hint">(or leave blank if set in server .env)</span></label>
+          <div class="ai-input-wrap">
+            <input type="password" id="aiApiKeyInput" class="ai-setting-input" placeholder="e.g. AIzaSy... or sk-..." autocomplete="off" />
+            <button type="button" id="aiToggleKeyBtn" class="ai-key-toggle-btn" title="Show/Hide Key">👁️</button>
+          </div>
+        </div>
+
+        <div class="ai-setting-field" id="aiModelField">
+          <label for="aiModelInput">Model Identifier</label>
+          <input type="text" id="aiModelInput" class="ai-setting-input" placeholder="e.g. gemini-2.0-flash, gpt-4o-mini, llama3" />
+          <div class="ai-preset-chips" id="aiPresetChips">
+            <button type="button" class="ai-preset-chip" data-provider="gemini" data-model="gemini-2.0-flash">gemini-2.0-flash</button>
+            <button type="button" class="ai-preset-chip" data-provider="gemini" data-model="gemini-1.5-flash">gemini-1.5-flash</button>
+            <button type="button" class="ai-preset-chip" data-provider="openai" data-model="gpt-4o-mini">gpt-4o-mini</button>
+            <button type="button" class="ai-preset-chip" data-provider="ollama" data-model="llama3">llama3</button>
+          </div>
+        </div>
+
+        <div class="ai-setting-field" id="aiBaseUrlField">
+          <label for="aiBaseUrlInput">Custom Base URL <span class="ai-setting-hint">(optional, e.g. Groq, Ollama)</span></label>
+          <input type="text" id="aiBaseUrlInput" class="ai-setting-input" placeholder="http://localhost:11434 or https://api.groq.com/openai/v1" />
+        </div>
+
+        <div class="ai-settings-actions">
+          <button type="button" id="aiTestConnectionBtn" class="ai-btn-secondary">⚡ Test Connection</button>
+          <button type="button" id="aiSaveSettingsBtn" class="ai-btn-primary">💾 Save Settings</button>
+        </div>
+        <div id="aiConnectionStatus" class="ai-connection-status hidden"></div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="ai-chat-body" id="aiChatBody">
+      <!-- Suggested Prompts Carousel -->
+      <div class="ai-prompts-wrapper">
+        <div class="ai-prompts-label">Suggested Questions</div>
+        <div class="ai-prompts-carousel" id="aiPromptsCarousel">
+          <!-- Dynamically filled with the 7 suggested prompts -->
+        </div>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="aiMessagesContainer" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Initial welcome bot message -->
+        <div class="ai-message-row assistant">
+          <div class="ai-msg-avatar">🤖</div>
+          <div class="ai-msg-bubble">
+            <p><strong>Welcome to the LPU Event Scheduling AI Assistant!</strong></p>
+            <p>I have direct real-time access to the university's event database, venue capacities, staff allocations, and conflict logs.</p>
+            <p>You can ask me to find events, check available venues, explain unresolved conflicts, or summarize schedules.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Animated Typing Indicator (hidden by default) -->
+      <div id="aiTypingIndicator" class="ai-message-row assistant hidden">
+        <div class="ai-msg-avatar">🤖</div>
+        <div class="ai-typing-indicator">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Input Form -->
+    <div class="ai-chat-footer">
+      <form id="aiChatForm" class="ai-input-form">
+        <input
+          type="text"
+          id="aiChatInput"
+          class="ai-chat-input"
+          placeholder="Ask about schedules, venues, conflicts, or What-If..."
+          autocomplete="off"
+          required
+        />
+        <button type="submit" id="aiSendBtn" class="ai-send-btn" title="Send Question">
+          <span>➤</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=2.8"></script>
+</body>
+</html>
