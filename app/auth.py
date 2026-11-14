@@ -161,75 +161,170 @@ def is_email_provider_configured() -> bool:
     return bool(os.environ.get("SMTP_HOST"))
 
 
+# def send_email_otp(to_email: str, otp_code: str, purpose: str = "2fa") -> tuple[bool, str]:
+#     """Sends OTP via real SMTP provider if configured; otherwise reports provider unavailable.
+#     Never exposes, logs, or prints secrets."""
+#     smtp_host = os.environ.get("SMTP_HOST")
+#     if not smtp_host:
+#         return False, "Institutional email delivery provider (SMTP) is not configured on this server."
+
+#     try:
+#         import smtplib
+#         from email.mime.multipart import MIMEMultipart
+#         from email.mime.text import MIMEText
+
+#         smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+#         smtp_user = os.environ.get("SMTP_USER", "").strip()
+#         smtp_password = os.environ.get("SMTP_PASSWORD", "").strip()
+#         smtp_from = os.environ.get("SMTP_FROM", smtp_user or "noreply@lpu.in").strip()
+#         use_tls = os.environ.get("SMTP_USE_TLS", "true").lower() in ("true", "1", "yes")
+
+#         # Dynamic target recipient: directly use the authenticated user's email address
+#         target_email = to_email.strip().lower()
+
+#         # Clean Google App Password spaces if user pasted 4-chunk format (e.g. "xxxx xxxx xxxx xxxx")
+#         if smtp_host and "gmail" in smtp_host.lower():
+#             no_space_pwd = smtp_password.replace(" ", "")
+#             if len(no_space_pwd) == 16:
+#                 smtp_password = no_space_pwd
+
+#         action_desc = "Two-Factor Verification Code" if purpose == "2fa" else "Password Reset Code"
+#         msg = MIMEMultipart("alternative")
+#         msg["Subject"] = f"LPU Event Scheduler - {action_desc} [{otp_code}]"
+        
+#         # Proper RFC From header with display name
+#         if "<" not in smtp_from:
+#             msg["From"] = f"LPU Identity Services <{smtp_from}>"
+#         else:
+#             msg["From"] = smtp_from
+#         msg["To"] = target_email
+
+#         text = f"Your 6-digit {action_desc.lower()} is: {otp_code}. It is valid for {OTP_EXPIRATION_MINUTES} minutes. If you did not request this, please secure your account immediately."
+#         html = f"""
+#         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 24px; color: #1e293b; background: #f8fafc; border-radius: 12px; max-width: 500px; margin: auto; border: 1px solid #e2e8f0;">
+#           <h2 style="color: #ea580c; margin-top: 0; font-size: 20px;">Lovely Professional University</h2>
+#           <p style="font-size: 15px; color: #334155; margin-bottom: 20px;">Your institutional {action_desc} is:</p>
+#           <div style="font-size: 32px; font-weight: 800; letter-spacing: 6px; padding: 14px 24px; background: #ffffff; width: fit-content; border-radius: 8px; border: 2px solid #ea580c; color: #0f172a; margin-bottom: 20px;">
+#             {otp_code}
+#           </div>
+#           <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin-top: 16px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+#             This security code expires in {OTP_EXPIRATION_MINUTES} minutes.<br>
+#             If you did not initiate this sign-in request, please secure your account immediately.
+#           </p>
+#         </div>
+#         """
+#         msg.attach(MIMEText(text, "plain"))
+#         msg.attach(MIMEText(html, "html"))
+
+#         # Extract bare email address for SMTP envelope
+#         sender_addr = smtp_from
+#         if "<" in sender_addr and ">" in sender_addr:
+#             sender_addr = sender_addr.split("<")[1].split(">")[0].strip()
+
+#         with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as server:
+#             if use_tls:
+#                 server.starttls()
+#             if smtp_user and smtp_password:
+#                 server.login(smtp_user, smtp_password)
+#             server.sendmail(sender_addr, [target_email], msg.as_string())
+#         return True, f"Dispatched via Gmail SMTP to {mask_email(target_email)}."
+#     except Exception as e:
+#         return False, f"SMTP delivery failed: {str(e)}"
+
 def send_email_otp(to_email: str, otp_code: str, purpose: str = "2fa") -> tuple[bool, str]:
-    """Sends OTP via real SMTP provider if configured; otherwise reports provider unavailable.
-    Never exposes, logs, or prints secrets."""
-    smtp_host = os.environ.get("SMTP_HOST")
-    if not smtp_host:
-        return False, "Institutional email delivery provider (SMTP) is not configured on this server."
+    """Send OTP using Resend HTTPS API."""
+
+    import json
+    import urllib.request
+    import urllib.error
+
+    api_key = os.environ.get("RESEND_API_KEY", "").strip()
+
+    if not api_key:
+        return False, "Resend API key is not configured on this server."
+
+    sender = os.environ.get(
+        "RESEND_FROM_EMAIL",
+        "onboarding@resend.dev"
+    ).strip()
+
+    target_email = to_email.strip().lower()
+
+    action_desc = (
+        "Two-Factor Verification Code"
+        if purpose == "2fa"
+        else "Password Reset Code"
+    )
+
+    text_body = (
+        f"Your 6-digit {action_desc.lower()} is: {otp_code}. "
+        f"It is valid for {OTP_EXPIRATION_MINUTES} minutes. "
+        "If you did not request this, please secure your account."
+    )
+
+    html_body = f"""
+    <div style="font-family:Arial,sans-serif;padding:24px;
+                color:#1e293b;background:#f8fafc;
+                border-radius:12px;max-width:500px;margin:auto;">
+        <h2 style="color:#ea580c;">
+            Lovely Professional University
+        </h2>
+
+        <p>Your institutional {action_desc} is:</p>
+
+        <div style="font-size:32px;font-weight:800;
+                    letter-spacing:6px;padding:14px;
+                    background:white;border:2px solid #ea580c;
+                    border-radius:8px;color:#0f172a;">
+            {otp_code}
+        </div>
+
+        <p style="color:#64748b;margin-top:20px;">
+            This security code expires in
+            {OTP_EXPIRATION_MINUTES} minutes.
+        </p>
+        <p>If you did not request this code, secure your account.
+        </p>
+    </div>
+    """
+
+    payload = {
+        "from": sender,
+        "to": [target_email],
+        "subject": f"LPU Event Scheduler - {action_desc}",
+        "text": text_body,
+        "html": html_body
+    }
+
+    request = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        },
+        method="POST"
+    )
 
     try:
-        import smtplib
-        from email.mime.multipart import MIMEMultipart
-        from email.mime.text import MIMEText
+        with urllib.request.urlopen(request, timeout=15) as response:
+            result = json.loads(response.read().decode("utf-8"))
 
-        smtp_port = int(os.environ.get("SMTP_PORT", "587"))
-        smtp_user = os.environ.get("SMTP_USER", "").strip()
-        smtp_password = os.environ.get("SMTP_PASSWORD", "").strip()
-        smtp_from = os.environ.get("SMTP_FROM", smtp_user or "noreply@lpu.in").strip()
-        use_tls = os.environ.get("SMTP_USE_TLS", "true").lower() in ("true", "1", "yes")
+            email_id = result.get("id", "unknown")
 
-        # Dynamic target recipient: directly use the authenticated user's email address
-        target_email = to_email.strip().lower()
+            return True, (
+                f"Email accepted by Resend for "
+                f"{mask_email(target_email)}. ID: {email_id}"
+            )
 
-        # Clean Google App Password spaces if user pasted 4-chunk format (e.g. "xxxx xxxx xxxx xxxx")
-        if smtp_host and "gmail" in smtp_host.lower():
-            no_space_pwd = smtp_password.replace(" ", "")
-            if len(no_space_pwd) == 16:
-                smtp_password = no_space_pwd
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8", errors="replace")
+        return False, (
+            f"Resend API error ({e.code}): {error_body[:400]}"
+        )
 
-        action_desc = "Two-Factor Verification Code" if purpose == "2fa" else "Password Reset Code"
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = f"LPU Event Scheduler - {action_desc} [{otp_code}]"
-        
-        # Proper RFC From header with display name
-        if "<" not in smtp_from:
-            msg["From"] = f"LPU Identity Services <{smtp_from}>"
-        else:
-            msg["From"] = smtp_from
-        msg["To"] = target_email
-
-        text = f"Your 6-digit {action_desc.lower()} is: {otp_code}. It is valid for {OTP_EXPIRATION_MINUTES} minutes. If you did not request this, please secure your account immediately."
-        html = f"""
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 24px; color: #1e293b; background: #f8fafc; border-radius: 12px; max-width: 500px; margin: auto; border: 1px solid #e2e8f0;">
-          <h2 style="color: #ea580c; margin-top: 0; font-size: 20px;">Lovely Professional University</h2>
-          <p style="font-size: 15px; color: #334155; margin-bottom: 20px;">Your institutional {action_desc} is:</p>
-          <div style="font-size: 32px; font-weight: 800; letter-spacing: 6px; padding: 14px 24px; background: #ffffff; width: fit-content; border-radius: 8px; border: 2px solid #ea580c; color: #0f172a; margin-bottom: 20px;">
-            {otp_code}
-          </div>
-          <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin-top: 16px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
-            This security code expires in {OTP_EXPIRATION_MINUTES} minutes.<br>
-            If you did not initiate this sign-in request, please secure your account immediately.
-          </p>
-        </div>
-        """
-        msg.attach(MIMEText(text, "plain"))
-        msg.attach(MIMEText(html, "html"))
-
-        # Extract bare email address for SMTP envelope
-        sender_addr = smtp_from
-        if "<" in sender_addr and ">" in sender_addr:
-            sender_addr = sender_addr.split("<")[1].split(">")[0].strip()
-
-        with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as server:
-            if use_tls:
-                server.starttls()
-            if smtp_user and smtp_password:
-                server.login(smtp_user, smtp_password)
-            server.sendmail(sender_addr, [target_email], msg.as_string())
-        return True, f"Dispatched via Gmail SMTP to {mask_email(target_email)}."
     except Exception as e:
-        return False, f"SMTP delivery failed: {str(e)}"
+        return False, f"Resend delivery error: {type(e).__name__}"
 
 DEMO_ACCOUNTS = [
     {
