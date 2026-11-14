@@ -299,10 +299,16 @@ def send_email_otp(to_email: str, otp_code: str, purpose: str = "2fa") -> tuple[
     request = urllib.request.Request(
         "https://api.resend.com/emails",
         data=json.dumps(payload).encode("utf-8"),
+        # headers={
+        #     "Authorization": f"Bearer {api_key}",
+        #     "Content-Type": "application/json"
+        # },
         headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        },
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "User-Agent": "LPU-Event-Scheduler/1.0"
+},
         method="POST"
     )
 
